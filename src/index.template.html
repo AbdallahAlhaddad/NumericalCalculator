@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Compiled and minified CSS (Materialize) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" />
+
+  <!-- Material design icons (Materialize) -->
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
+  <!-- my custom css -->
+  <link rel="stylesheet" href="./styles.css" />
+
+  <title>Numerical Methods calculator</title>
+</head>
+
+<body>
+  <noscript>
+    <h1 style="color: red;">Please enable JavaScript for this website to work properly</h1>
+  </noscript>
+  <div class="container">
+    <!-- "Choose a method" Card -->
+    <div class="row" id="choose-method-card">
+      <div class="col s12">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Choose a numerical method</span>
+
+            <form action="#" id="choose-a-method-form">
+              <!-- CH.1 -->
+              <div>
+                <p>Root Of Polynomials:</p>
+                <p>
+                  <label>
+                    <input id="bisection" class="with-gap" name="group1" type="radio" checked />
+                    <span>Bisection Method</span>
+                  </label>
+                </p>
+
+                <p>
+                  <label>
+                    <input id="falsePosition" class="with-gap" name="group1" type="radio" />
+                    <span>False Position Method</span>
+                  </label>
+                </p>
+
+                <p>
+                  <label>
+                    <input id="simpleFixed" class="with-gap" name="group1" type="radio" />
+                    <span>Simple Fixed Point Method</span>
+                  </label>
+                </p>
+
+                <p>
+                  <label>
+                    <input id="newton" class="with-gap" name="group1" type="radio" />
+                    <span>Newton Method</span>
+                  </label>
+                </p>
+              </div>
+
+              <!-- CH.2 -->
+              <div>
+                <p>Linear Algebraic Equations:</p>
+
+                <p>
+                  <label>
+                    <input id="gauss" class="with-gap" name="group1" type="radio" />
+                    <span>Gauss Elimination Method</span>
+                  </label>
+                </p>
+
+                <p>
+                  <label>
+                    <input id="lu" class="with-gap" name="group1" type="radio" />
+                    <span>LU Decomposition Method</span>
+                  </label>
+                </p>
+
+                <p>
+                  <label>
+                    <input id="crammer" class="with-gap" name="group1" type="radio" />
+                    <span>Cramer's Rule Method</span>
+                  </label>
+                </p>
+              </div>
+
+              <!-- CH.3 -->
+              <div>
+                <p>Unconstrained optimization:</p>
+                <p>
+                  <label>
+                    <input id="golden" class="with-gap" name="group1" type="radio" />
+                    <span>Golden Section Search</span>
+                  </label>
+                </p>
+                <p>
+                  <label>
+                    <input id="hessian" class="with-gap" name="group1" type="radio" />
+                    <span>Gradients and hessian</span>
+                  </label>
+                </p>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Preloader (at page initial only) -->
+    <div class="center-align pageLoadAnimation">
+      <div class="lds-ripple">
+        <div></div>
+        <div></div>
+      </div>
+    </div>
+
+    <!-- "Equation" Card -->
+    <div class="row" id="equation-card">
+      <div class="col s12">
+        <div class="card">
+          <div class="card-content" style="padding-bottom: 5px;">
+            <span class="card-title">Enter a Function</span>
+
+            <!-- Form start -->
+            <div class="row">
+              <form>
+                <div class="equation-input-div col s12">
+                  <!-- Equation input -->
+                  <div class="row" style="margin-bottom: 0;">
+                    <div class="col s12">
+                      <div class="input-field">
+                        <input id="math-input" type="text" />
+                        <label for="math-input">`f(x)=`</label>
+                        <span class="helper-text" data-error="Invalid function">e.g.:
+                          sin(x^23+10)*sqrt(x)+(x+1)/2</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- equation preview -->
+                  <div class="row">
+                    <div class="col s12 center-align" style="overflow-x: auto; overflow-y: hidden;">
+                      <p id="math-preview" class="equation-display" style="font-size: x-large; padding-top: 15px;"></p>
+                    </div>
+                  </div>
+
+                  <!-- Derivative input (in newton method only) -->
+                  <div class="row diff-input" style="margin-bottom: 0; display: none;">
+                    <div class="col s12">
+                      <div class="input-field">
+                        <input id="diff-input" type="text" />
+                        <label for="diff-input">`f'(x) = `</label>
+                        <span class="helper-text" data-error="Invalid function">Optional</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Derivative preview (in newton method only)-->
+                  <div class="row diff-preview" style="display: none;">
+                    <div class="col s12 center-align" style="overflow-x: auto; overflow-y: hidden;">
+                      <p id="diff-preview" class="equation-display" style="font-size: x-large; padding-top: 15px;"></p>
+                    </div>
+                  </div>
+                  <!-- [xl,xu](bisect & false pos), x0(simple fixed) and err -->
+                  <div class="row">
+                    <!-- xl -->
+                    <div class="input-field col s6 m3 xl-div number">
+                      <input id="xl" type="text" step="any" class="validate" />
+                      <label for="xl">`x_{l}`</label>
+                    </div>
+                    <!-- xu -->
+                    <div class="input-field col s6 m3 xu-div number ">
+                      <input id="xu" type="text" step="any" class="validate" />
+                      <label for="xu">`x_{u}`</label>
+                    </div>
+                    <!-- x0 -->
+                    <div class="input-field col s6 m3 x0-div number">
+                      <input id="x0" type="text" step="any" class="validate" />
+                      <label for="x0">`x_{0}`</label>
+                    </div>
+                    <!-- x (hessian) -->
+                    <div class="input-field col s6 m3 x-div number">
+                      <input id="x" type="text" step="any" class="validate" />
+                      <label for="x">`x`</label>
+                    </div>
+                    <!-- y (hessian) -->
+                    <div class="input-field col s6 m3 y-div number">
+                      <input id="y" type="text" step="any" class="validate" />
+                      <label for="y">`y`</label>
+                    </div>
+                    <!-- error -->
+                    <div class="input-field col s6 m3 err-div">
+                      <input id="err" type="text" min="1" max="99" />
+                      <label for="err">`\varepsilon_{e}`</label>
+                      <span class="helper-text" data-error="0 &lt; &epsi;&#8337; &lt; 100"></span>
+                    </div>
+                    <!-- max Iterations -->
+                    <div class="input-field col s6 m3 max-iter-div">
+                      <input id="maxIter" type="number" min="1" step="1" />
+                      <label for="maxIter"><em>Max Iterations</em></label>
+                      <span class="helper-text" data-error="Must be positive integer"></span>
+                    </div>
+                    <!-- decimals and rounding -->
+                    <div class="valign-wrapper col">
+                      <!-- num of decimal places -->
+                      <div class="input-field col max-iter-div">
+                        <input id="precision" type="number" min="1" step="1" value="3" />
+                        <label for="precision"><em>Decimals</em></label>
+                        <span class="helper-text" data-error="Must be positive integer"></span>
+                      </div>
+                      <!-- rounding ? -->
+                      <div class="input-field col max-iter-div">
+                        <p>
+                          <label>
+                            <input id="rounding" type="checkbox" checked="checked" />
+                            <span>Round numbers?</span>
+                          </label>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- matrix Input -->
+                <div class="matrix-input-div row col s12 center-align" style="margin-top: 20px;">
+                  <table class="matrix augmented-matrix browser-default">
+                    <!-- row 1 -->
+                    <tr class="browser-default">
+                      <td>
+                        <input class="browser-default" type="number" id="a1" />
+                      </td>
+                      <td>
+                        <input class="browser-default" type="number" id="a2" />
+                      </td>
+                      <td>
+                        <input class="browser-default" type="number" id="a3" />
+                      </td>
+                      <td>
+                        <input class="browser-default" type="number" id="x1" />
+                      </td>
+                    </tr>
+
+                    <!-- row 2 -->
+                    <tr class="browser-default">
+                      <td>
+                        <input class="browser-default" type="number" id="b1" />
+                      </td>
+                      <td>
+                        <input class="browser-default" type="number" id="b2" />
+                      </td>
+                      <td>
+                        <input class="browser-default" type="number" id="b3" />
+                      </td>
+                      <td>
+                        <input class="browser-default" type="number" id="x2" />
+                      </td>
+                    </tr>
+
+                    <!-- row 3 -->
+                    <tr class="browser-default">
+                      <td>
+                        <input class="browser-default" type="number" id="c1" />
+                      </td>
+                      <td>
+                        <input class="browser-default" type="number" id="c2" />
+                      </td>
+                      <td>
+                        <input class="browser-default" type="number" id="c3" />
+                      </td>
+                      <td>
+                        <input class="browser-default" type="number" id="x3" />
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+
+                <!-- calculate button -->
+                <div class="row" style="margin-bottom: 5px;">
+                  <div class="col s12 center-align">
+                    <input type="submit" disabled value="Calculate" class="btn calc-btn" />
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- "Results" card -->
+    <div id="results-card" class="row">
+      <div class="col s12">
+        <div class="card">
+          <div class="card-content">
+            <span class="card-title">Results</span>
+            <!-- calculation in progress animation  -->
+            <div class="row results-progress-bar" style="margin-bottom: 0;">
+              <div class="col s12">
+                <div class="card-action">
+                  <div class="progress">
+                    <div class="indeterminate"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- results div -->
+            <div class="row results-div" id="results-d" style="overflow-x: auto;"></div>
+
+            <!-- result buttons div (filled by js) -->
+            <!-- <div class="results-buttons-container row right-align" style="padding-top: 30px;"></div> -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compiled and minified (materialize) JavaScript -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+
+</html>
