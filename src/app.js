@@ -3,7 +3,6 @@ require('./js/mathjax-config')
 require('./js/methodSwitching')
 require('./js/customFieldValidation')
 require('./js/calcBtnAnimation')
-
 import $ from 'jquery'
 
 import {
@@ -222,6 +221,13 @@ const hessian = () => {
 
 //!==> Helper Functions:
 // create a Dynamic 2D array
+function a(rows, cols) {
+  var array = new Array(rows)
+  for (var i = 0; i < array.length; i++) {
+    array[i] = new Array(cols)
+  }
+  return array
+}
 
 //get matrix user Input
 const getInputMat = () => {
