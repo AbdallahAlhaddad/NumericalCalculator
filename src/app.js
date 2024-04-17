@@ -99,7 +99,7 @@ $(window).on('load', () => {
     else if (methods.falsePosition) bisectionOrFalsePos({ falsePos: true })
     else if (methods.simpleFixed) simpleFixed({})
     else if (methods.newton) newton()
-    else if (methods.gauss) guass()
+    else if (methods.gauss) gauss()
     else if (methods.lu) lu()
     else if (methods.crammer) crammer()
     else if (methods.golden) goldenSec()
@@ -188,7 +188,7 @@ const goldenSec = () => {
   MathJax.typeset()
 }
 
-const guass = () => {
+const gauss = () => {
   const matrix = getInputMat()
   const results = calcGauss(matrix)
   console.log(results)
@@ -207,8 +207,6 @@ const crammer = () => {
 }
 
 const hessian = () => {
-  console.log('flag 1')
-
   const results = maxAndMinFunction(
     parseFloat(eval(x.val())),
     parseFloat(eval(y.val())),

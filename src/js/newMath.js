@@ -510,7 +510,7 @@ export const calcGauss = (matrix) => {
 //! tested and working
 export const calcLu = (matrix) => {
   // solve using gauss
-  let gaussResult = gauss(matrix)
+  let gaussResult = calcGauss(matrix)
   // A matrix and B matrix
   let a = [
     [matrix[0][0], matrix[0][1], matrix[0][2]],
@@ -583,8 +583,8 @@ export const calcCrammer = (matrix) => {
         detm1[j][m] = b[j]
       }
     }
-    let det = truncateNum(det(detm1), 3)
-    detResult.push({ det: det, detMatrix: detm1 })
+    let calculatedDet = truncateNum(det(detm1), 3)
+    detResult.push({ det: calculatedDet, detMatrix: detm1 })
   }
   return detResult
 }
